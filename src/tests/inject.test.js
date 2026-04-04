@@ -9,7 +9,7 @@ describe('injectReloadClient', () => {
   let tmpDir;
 
   before(() => {
-    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'extload-test-'));
+    tmpDir = fs.mkdtempSync(path.join(os.tmpdir(), 'livepak-test-'));
   });
 
   after(() => {
@@ -34,7 +34,7 @@ describe('injectReloadClient', () => {
     const manifest = JSON.parse(fs.readFileSync(path.join(extDir, 'manifest.json'), 'utf-8'));
     assert.ok(manifest.background.scripts.includes('__dev_reload.js'));
     assert.ok(fs.existsSync(path.join(extDir, '__dev_reload.js')));
-    assert.ok(fs.existsSync(path.join(extDir, '__dev_extload.lock')));
+    assert.ok(fs.existsSync(path.join(extDir, '__dev_livepak.lock')));
 
     const script = fs.readFileSync(path.join(extDir, '__dev_reload.js'), 'utf-8');
     assert.ok(script.includes('ws://localhost:9999'));
@@ -43,7 +43,7 @@ describe('injectReloadClient', () => {
     const restored = JSON.parse(fs.readFileSync(path.join(extDir, 'manifest.json'), 'utf-8'));
     assert.ok(!restored.background.scripts.includes('__dev_reload.js'));
     assert.ok(!fs.existsSync(path.join(extDir, '__dev_reload.js')));
-    assert.ok(!fs.existsSync(path.join(extDir, '__dev_extload.lock')));
+    assert.ok(!fs.existsSync(path.join(extDir, '__dev_livepak.lock')));
   });
 
   it('should inject into MV3 manifest with existing service_worker', () => {
@@ -117,7 +117,7 @@ describe('injectReloadClient', () => {
       version: '1.0',
       background: { service_worker: '__dev_sw_wrapper.js' },
     }));
-    fs.writeFileSync(path.join(extDir, '__dev_extload.lock'), JSON.stringify({
+    fs.writeFileSync(path.join(extDir, '__dev_livepak.lock'), JSON.stringify({
       originalManifest,
       pid: 99999,
     }));
@@ -131,6 +131,6 @@ describe('injectReloadClient', () => {
     assert.strictEqual(manifest.background.service_worker, 'bg.js');
     assert.ok(!fs.existsSync(path.join(extDir, '__dev_reload.js')));
     assert.ok(!fs.existsSync(path.join(extDir, '__dev_sw_wrapper.js')));
-    assert.ok(!fs.existsSync(path.join(extDir, '__dev_extload.lock')));
+    assert.ok(!fs.existsSync(path.join(extDir, '__dev_livepak.lock')));
   });
 });

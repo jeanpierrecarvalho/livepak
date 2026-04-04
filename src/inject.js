@@ -3,20 +3,20 @@ import path from 'path';
 
 const RELOAD_SCRIPT_NAME = '__dev_reload.js';
 const WRAPPER_NAME = '__dev_sw_wrapper.js';
-const LOCKFILE_NAME = '__dev_extload.lock';
+const LOCKFILE_NAME = '__dev_livepak.lock';
 
 /**
  * Generates the content script that connects to the WS server
  * and triggers chrome.runtime.reload() on signal.
  */
 function reloadClientCode(port) {
-  return `// auto-injected by extload dev server
+  return `// auto-injected by livepak dev server
 (function() {
   const ws = new WebSocket('ws://localhost:${port}');
   ws.onmessage = function(event) {
     const msg = JSON.parse(event.data);
     if (msg.type === 'reload') {
-      console.log('[extload] reloading extension...');
+      console.log('[livepak] reloading extension...');
       chrome.runtime.reload();
     }
   };
@@ -28,7 +28,7 @@ function reloadClientCode(port) {
 }
 
 /**
- * Checks if a previous extload session left dirty state and restores it.
+ * Checks if a previous livepak session left dirty state and restores it.
  * Called on startup before injecting anything new.
  */
 export function restoreIfDirty(extensionDir) {

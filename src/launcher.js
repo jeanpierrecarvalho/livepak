@@ -5,7 +5,7 @@ import os from 'os';
 import { ensureChrome } from './chrome.js';
 import { cdpGet, cdpConnect } from './cdp.js';
 
-const PROFILE_DIR = path.join(os.tmpdir(), 'extload-profile');
+const PROFILE_DIR = path.join(os.tmpdir(), 'livepak-profile');
 
 function extensionIdFromPath(extPath) {
   const hash = crypto.createHash('sha256').update(extPath).digest('hex');

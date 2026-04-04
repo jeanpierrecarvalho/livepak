@@ -4,7 +4,7 @@ Zero-dependency Chrome extension dev server with auto-reload, toolbar pinning, a
 
 ## Why
 
-Developing Chrome extensions means constantly: unload, load unpacked, click refresh, test. **extload** eliminates all of that.
+Developing Chrome extensions means constantly: unload, load unpacked, click refresh, test. **livepak** eliminates all of that.
 
 - **Zero dependencies** -- no `npm install`, just Node.js 22+
 - **Auto-downloads Chrome for Testing** -- bypasses stable Chrome's `--load-extension` block
@@ -30,7 +30,7 @@ livepak ./my-extension
 ## Usage
 
 ```
-extload <ext-dir> [ext-dir2 ...] [options]
+livepak <ext-dir> [ext-dir2 ...] [options]
 
 Options:
   --port <n>             WebSocket port (default: 35729, auto-increments on conflict)
@@ -39,7 +39,7 @@ Options:
   --chrome-flags <flags> Extra Chrome flags (comma-separated)
   --no-launch            Don't launch Chrome, just watch + reload
   --no-inject            Don't inject reload script (manual setup)
-  --config <path>        Config file path (default: ./extload.config.json)
+  --config <path>        Config file path (default: ./livepak.config.json)
 ```
 
 ## Examples
@@ -63,7 +63,7 @@ livepak ./my-extension --no-launch
 
 ## Config file
 
-Create `extload.config.json` in your project root:
+Create `livepak.config.json` in your project root:
 
 ```json
 {
@@ -79,7 +79,7 @@ Create `extload.config.json` in your project root:
 
 1. **Injects** a tiny WebSocket client into your extension's service worker/background script
 2. **Watches** your extension directory for file changes
-3. **Downloads** Chrome for Testing (cached in `~/.cache/extload/`)
+3. **Downloads** Chrome for Testing (cached in `~/.cache/livepak/`)
 4. **Launches** Chrome with `--load-extension` and pins extensions via CDP
 5. **Signals** `chrome.runtime.reload()` over WebSocket when files change
 6. **Refreshes** active tabs when content scripts may have changed
@@ -95,7 +95,7 @@ Create `extload.config.json` in your project root:
 
 | Tool | Deps | Framework lock-in | Auto-reload | Pin | Content script reload |
 |------|------|-------------------|-------------|-----|----------------------|
-| **extload** | 0 | None | Yes | Yes | Yes |
+| **livepak** | 0 | None | Yes | Yes | Yes |
 | Plasmo | Heavy | Yes | Yes | No | Yes |
 | WXT | Heavy | Yes (Vite) | Yes | No | Yes |
 | CRXJS | Heavy | Yes (Vite) | Yes | No | No |

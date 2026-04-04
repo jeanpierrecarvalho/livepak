@@ -8,7 +8,7 @@ const VERSIONS_URL =
 const KNOWN_VERSIONS_URL =
   'https://googlechromelabs.github.io/chrome-for-testing/known-good-versions-with-downloads.json';
 
-const CACHE_DIR = path.join(os.homedir(), '.cache', 'extload');
+const CACHE_DIR = path.join(os.homedir(), '.cache', 'livepak');
 const UPDATE_CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 hours
 
 function platform() {

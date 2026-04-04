@@ -8,7 +8,7 @@ const CLI = path.resolve('src/cli.js');
 describe('CLI', () => {
   it('should show help with --help flag', () => {
     const output = execFileSync('node', [CLI, '--help'], { encoding: 'utf-8' });
-    assert.ok(output.includes('extload'));
+    assert.ok(output.includes('livepak'));
     assert.ok(output.includes('Usage'));
     assert.ok(output.includes('--port'));
     assert.ok(output.includes('--open'));
