@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 220px;
+      padding: 16px;
+      font-family: system-ui, sans-serif;
+    }
+    h1 { font-size: 16px; margin: 0 0 12px; }
+    #count { font-size: 48px; font-weight: bold; color: #1976d2; text-align: center; }
+    #list { margin-top: 12px; font-size: 12px; max-height: 200px; overflow-y: auto; }
+    .tab { padding: 4px 0; border-bottom: 1px solid #eee; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  </style>
+</head>
+<body>
+  <h1>Open Tabs</h1>
+  <div id="count">0</div>
+  <div id="list"></div>
+  <script src="popup.js"></script>
+</body>
+</html>

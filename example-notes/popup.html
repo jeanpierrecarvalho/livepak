@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    body {
+      width: 260px;
+      padding: 12px;
+      font-family: system-ui, sans-serif;
+    }
+    h1 { font-size: 16px; margin: 0 0 8px; color: #e65100; }
+    textarea {
+      width: 100%;
+      height: 150px;
+      border: 2px solid #e65100;
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 13px;
+      resize: none;
+      box-sizing: border-box;
+    }
+    textarea:focus { outline: none; border-color: #bf360c; }
+    .status { font-size: 11px; color: #999; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Quick Notes</h1>
+  <textarea id="notes" placeholder="Type your notes..."></textarea>
+  <div class="status" id="status">Saved</div>
+  <script src="popup.js"></script>
+</body>
+</html>

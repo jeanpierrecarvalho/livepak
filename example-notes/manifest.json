@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Quick Notes",
+  "version": "1.0",
+  "description": "Simple popup notepad",
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage"]
+}
