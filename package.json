@@ -7,7 +7,7 @@
     "node": ">=22.0.0"
   },
   "bin": {
-    "livepak": "./src/cli.js"
+    "livepak": "src/cli.js"
   },
   "files": [
     "src/"
@@ -28,7 +28,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/jeanpierrecarvalho/livepak"
+    "url": "git+https://github.com/jeanpierrecarvalho/livepak.git"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "license": "MIT"
 }
