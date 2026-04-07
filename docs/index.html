@@ -6,242 +6,143 @@
   <title>livepak</title>
   <meta name="description" content="Dev server for Chrome extensions. Hot reload, auto-pinning, zero dependencies.">
   <meta property="og:title" content="livepak">
-  <meta property="og:description" content="Zero-dependency Chrome extension dev server.">
+  <meta property="og:description" content="Dev server for Chrome extensions. Hot reload, auto-pinning, zero dependencies.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://jeanpierrecarvalho.github.io/livepak/">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: #0b0b0c;
-      color: #d4d4d8;
-      line-height: 1.65;
-      -webkit-font-smoothing: antialiased;
+      color: #ccc;
+      line-height: 1.6;
     }
-
     a { color: #7ba4f5; }
-    a:hover { color: #a3c2ff; }
-    code { font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace; font-size: 0.9em; }
-
-    .wrap {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 80px 24px 60px;
-    }
-
-    h1 {
-      font-size: 42px;
-      font-weight: 700;
-      letter-spacing: -1.5px;
-      margin-bottom: 8px;
-    }
-
-    .tagline {
-      color: #a1a1aa;
-      font-size: 17px;
-      margin-bottom: 24px;
-    }
-
-    .links {
-      display: flex;
-      gap: 16px;
-      font-size: 14px;
-      margin-bottom: 40px;
-    }
-
-    .install-cmd {
-      display: inline-block;
-      background: #18181b;
-      border: 1px solid #27272a;
-      border-radius: 6px;
-      padding: 10px 16px;
-      font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
+    code, pre {
+      font-family: 'SF Mono', Consolas, monospace;
       font-size: 13px;
-      color: #a1a1aa;
-      margin-bottom: 48px;
+    }
+    .w {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 72px 20px 48px;
+    }
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: -1px;
+    }
+    .sub {
+      color: #888;
+      margin: 6px 0 20px;
+    }
+    .links { font-size: 14px; margin-bottom: 32px; }
+    .links a { margin-right: 14px; }
+    .cmd {
+      background: #161618;
+      border: 1px solid #222;
+      border-radius: 5px;
+      padding: 10px 14px;
+      color: #999;
+      display: inline-block;
+      margin-bottom: 40px;
       cursor: pointer;
     }
-
-    .install-cmd:hover { border-color: #3f3f46; }
-    .install-cmd span { color: #7ba4f5; user-select: none; }
-
+    .cmd:hover { border-color: #333; }
+    .cmd b { color: #7ba4f5; font-weight: normal; }
     h2 {
-      font-size: 20px;
+      font-size: 16px;
       font-weight: 600;
-      margin-top: 48px;
-      margin-bottom: 16px;
+      color: #ddd;
+      margin: 36px 0 10px;
     }
-
-    ul {
-      padding-left: 20px;
-      color: #a1a1aa;
-      font-size: 14px;
-    }
-
-    ul li { margin-bottom: 6px; }
-    ul li strong { color: #d4d4d8; font-weight: 500; }
-
-    .pre-wrap {
-      background: #18181b;
-      border: 1px solid #27272a;
-      border-radius: 6px;
+    p, li { font-size: 14px; color: #999; }
+    ul { padding-left: 18px; }
+    li { margin-bottom: 4px; }
+    li strong { color: #ccc; font-weight: 500; }
+    .block {
+      background: #161618;
+      border: 1px solid #222;
+      border-radius: 5px;
+      margin: 10px 0 16px;
       overflow: hidden;
-      margin: 12px 0 20px;
     }
-
-    .pre-label {
-      padding: 8px 14px;
-      font-size: 11px;
-      color: #52525b;
-      border-bottom: 1px solid #27272a;
+    pre { padding: 12px 14px; color: #999; overflow-x: auto; line-height: 1.55; }
+    pre .c { color: #555; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; margin: 8px 0; }
+    th { text-align: left; padding: 6px 12px; color: #666; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; border-bottom: 1px solid #1a1a1e; }
+    td { padding: 6px 12px; color: #888; border-bottom: 1px solid #1a1a1e; }
+    td:first-child { color: #ccc; }
+    tr:last-child td { border: none; }
+    .me { color: #7ba4f5; }
+    .flag { color: #7ba4f5; white-space: nowrap; min-width: 160px; display: inline-block; }
+    .opts p { margin: 3px 0; font-size: 13px; }
+    footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #1a1a1e; font-size: 12px; color: #555; }
+    footer a { color: #666; text-decoration: none; }
+    footer a:hover { color: #999; }
+    @media (max-width: 480px) {
+      .flag { display: block; min-width: auto; }
     }
-
-    pre {
-      padding: 14px;
-      overflow-x: auto;
-      font-family: 'SF Mono', 'Cascadia Code', Consolas, monospace;
-      font-size: 13px;
-      line-height: 1.6;
-      color: #a1a1aa;
-    }
-
-    pre .c { color: #52525b; }
-
-    .tbl {
-      overflow-x: auto;
-      margin: 12px 0;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-    }
-
-    th, td {
-      text-align: left;
-      padding: 8px 14px;
-      border-bottom: 1px solid #1e1e22;
-    }
-
-    th {
-      color: #71717a;
-      font-weight: 600;
-      font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    td { color: #a1a1aa; }
-    td:first-child { color: #d4d4d8; }
-    tr:last-child td { border-bottom: none; }
-    .hl { color: #7ba4f5; font-weight: 500; }
-
-    .opts {
-      font-size: 13px;
-      color: #a1a1aa;
-    }
-
-    .opt {
-      display: flex;
-      gap: 12px;
-      padding: 5px 0;
-    }
-
-    .opt code {
-      color: #7ba4f5;
-      white-space: nowrap;
-      min-width: 170px;
-    }
-
-    @media (max-width: 540px) {
-      .opt { flex-direction: column; gap: 0; }
-      .opt code { min-width: auto; }
-    }
-
-    footer {
-      margin-top: 56px;
-      padding-top: 24px;
-      border-top: 1px solid #1e1e22;
-      font-size: 13px;
-      color: #52525b;
-    }
-
-    footer a { color: #71717a; text-decoration: none; }
-    footer a:hover { color: #a1a1aa; }
   </style>
 </head>
 <body>
-  <div class="wrap">
-
+  <div class="w">
     <h1>livepak</h1>
-    <p class="tagline">Dev server for Chrome extensions. Hot reload, auto-pinning, zero dependencies.</p>
-
+    <p class="sub">Dev server for Chrome extensions. Hot reload, auto-pinning, zero dependencies.</p>
     <div class="links">
       <a href="https://github.com/jeanpierrecarvalho/livepak">GitHub</a>
       <a href="https://www.npmjs.com/package/livepak">npm</a>
     </div>
+    <div class="cmd" onclick="navigator.clipboard.writeText('npx livepak ./my-extension')"><b>$</b> npx livepak ./my-extension</div>
 
-    <div class="install-cmd" onclick="navigator.clipboard.writeText('npx livepak ./my-extension')">
-      <span>$ </span>npx livepak ./my-extension
-    </div>
+    <h2>Why</h2>
+    <p>Developing Chrome extensions means constantly reloading: remove, load unpacked, refresh, test. Stable Chrome doesn't even allow <code>--load-extension</code>. livepak handles all of that -- downloads Chrome for Testing, watches your files, reloads the extension over WebSocket, and pins it to the toolbar. No dependencies, just Node 22+.</p>
 
-    <h2>What it does</h2>
+    <h2>Features</h2>
     <ul>
-      <li><strong>Zero dependencies</strong> -- uses Node.js 22+ built-ins (fetch, WebSocket, fs.watch)</li>
-      <li><strong>Auto-downloads Chrome for Testing</strong> -- stable Chrome blocks --load-extension, this doesn't</li>
-      <li><strong>Hot reload</strong> -- WebSocket-based, file changes trigger instant extension reload</li>
-      <li><strong>Smart reload</strong> -- JS/JSON changes do full reload, CSS/HTML just refresh the popup/tab</li>
-      <li><strong>Toolbar pinning</strong> -- pins extensions automatically via Chrome DevTools Protocol</li>
-      <li><strong>Multi-extension</strong> -- watch and load several extensions at once</li>
-      <li><strong>Crash-safe</strong> -- lockfile restores your manifest if the process dies</li>
-      <li><strong>MV2 + MV3</strong> -- works on macOS, Linux, Windows</li>
+      <li><strong>No dependencies</strong> -- Node 22+ has everything (fetch, WebSocket, fs.watch)</li>
+      <li><strong>Downloads Chrome for Testing</strong> -- cached in <code>~/.cache/livepak/</code></li>
+      <li><strong>Hot reload</strong> -- file changes trigger <code>chrome.runtime.reload()</code></li>
+      <li><strong>Smart reload</strong> -- JS/JSON = full reload, CSS/HTML = soft refresh</li>
+      <li><strong>Auto-pins</strong> extensions to the toolbar via CDP</li>
+      <li><strong>Multi-extension</strong> -- load and watch several at once</li>
+      <li><strong>Crash recovery</strong> -- lockfile restores manifests if the process dies</li>
+      <li>Manifest V2 and V3, macOS/Linux/Windows</li>
     </ul>
 
-    <h2>How it works</h2>
-    <p style="color:#a1a1aa; font-size:14px;">
-      Injects a small WebSocket client into your extension's background/service worker.
-      Watches for file changes, then signals <code>chrome.runtime.reload()</code> over the socket.
-      Chrome for Testing is downloaded and cached in <code>~/.cache/livepak/</code>.
-      Extensions get pinned to the toolbar via CDP.
-      If the process crashes, a lockfile makes sure your manifest gets restored on next run.
-    </p>
-
     <h2>Usage</h2>
-
-    <div class="pre-wrap">
+    <div class="block">
       <pre><span class="c"># just run it</span>
 npx livepak ./my-extension
 
-<span class="c"># install globally</span>
-npm install -g livepak
+<span class="c"># or install globally</span>
+npm i -g livepak
 livepak ./my-extension
 
-<span class="c"># multiple extensions + open a page</span>
-livepak ./ext-popup ./ext-content --open https://example.com
+<span class="c"># multiple extensions, open a test page</span>
+livepak ./popup ./content --open https://example.com
 
-<span class="c"># specific Chrome version</span>
+<span class="c"># pin to a Chrome version</span>
 livepak ./my-extension --chrome-version 146
 
-<span class="c"># watch-only, no Chrome launch</span>
+<span class="c"># watch only, bring your own browser</span>
 livepak ./my-extension --no-launch</pre>
     </div>
 
     <h2>Options</h2>
     <div class="opts">
-      <div class="opt"><code>--port &lt;n&gt;</code> WebSocket port (default: 35729)</div>
-      <div class="opt"><code>--open &lt;url&gt;</code> Open a URL after launch</div>
-      <div class="opt"><code>--chrome-version &lt;v&gt;</code> Chrome version ("146", "latest")</div>
-      <div class="opt"><code>--chrome-flags &lt;f&gt;</code> Extra flags, comma-separated</div>
-      <div class="opt"><code>--no-launch</code> Just watch, don't open Chrome</div>
-      <div class="opt"><code>--no-inject</code> Skip reload script injection</div>
-      <div class="opt"><code>--config &lt;path&gt;</code> Config file (default: ./livepak.config.json)</div>
+      <p><code class="flag">--port &lt;n&gt;</code> WebSocket port (default 35729)</p>
+      <p><code class="flag">--open &lt;url&gt;</code> open a URL after launch</p>
+      <p><code class="flag">--chrome-version &lt;v&gt;</code> e.g. "146", "latest"</p>
+      <p><code class="flag">--chrome-flags &lt;f&gt;</code> extra flags, comma-separated</p>
+      <p><code class="flag">--no-launch</code> skip Chrome, just watch + reload</p>
+      <p><code class="flag">--no-inject</code> don't inject the reload script</p>
+      <p><code class="flag">--config &lt;path&gt;</code> config file path</p>
     </div>
 
-    <h2>Config file</h2>
-    <p style="color:#a1a1aa; font-size:14px; margin-bottom:4px;">Optional <code>livepak.config.json</code> in your project root:</p>
-    <div class="pre-wrap">
+    <h2>Config</h2>
+    <p>Drop a <code>livepak.config.json</code> in your project root:</p>
+    <div class="block">
       <pre>{
   "extensions": ["./src/extension"],
   "port": 4000,
@@ -251,26 +152,19 @@ livepak ./my-extension --no-launch</pre>
 }</pre>
     </div>
 
-    <h2>vs. others</h2>
-    <div class="tbl">
+    <h2>Comparison</h2>
+    <div style="overflow-x:auto">
       <table>
-        <thead>
-          <tr><th>Tool</th><th>Deps</th><th>Lock-in</th><th>Reload</th><th>Pin</th><th>Content</th></tr>
-        </thead>
-        <tbody>
-          <tr><td class="hl">livepak</td><td>0</td><td>None</td><td>Yes</td><td>Yes</td><td>Yes</td></tr>
-          <tr><td>Plasmo</td><td>Heavy</td><td>Yes</td><td>Yes</td><td>No</td><td>Yes</td></tr>
-          <tr><td>WXT</td><td>Heavy</td><td>Vite</td><td>Yes</td><td>No</td><td>Yes</td></tr>
-          <tr><td>CRXJS</td><td>Heavy</td><td>Vite</td><td>Yes</td><td>No</td><td>No</td></tr>
-          <tr><td>web-ext</td><td>Medium</td><td>None</td><td>Firefox only</td><td>No</td><td>No</td></tr>
-        </tbody>
+        <tr><th>Tool</th><th>Deps</th><th>Lock-in</th><th>Reload</th><th>Pin</th></tr>
+        <tr><td class="me">livepak</td><td>0</td><td>None</td><td>Yes</td><td>Yes</td></tr>
+        <tr><td>Plasmo</td><td>Heavy</td><td>Yes</td><td>Yes</td><td>No</td></tr>
+        <tr><td>WXT</td><td>Heavy</td><td>Vite</td><td>Yes</td><td>No</td></tr>
+        <tr><td>CRXJS</td><td>Heavy</td><td>Vite</td><td>Yes</td><td>No</td></tr>
+        <tr><td>web-ext</td><td>Medium</td><td>None</td><td>Firefox only</td><td>No</td></tr>
       </table>
     </div>
 
-    <footer>
-      MIT &middot; <a href="https://github.com/jeanpierrecarvalho/livepak">source</a> &middot; <a href="https://www.npmjs.com/package/livepak">npm</a>
-    </footer>
-
+    <footer>MIT &middot; <a href="https://github.com/jeanpierrecarvalho/livepak">source</a> &middot; <a href="https://www.npmjs.com/package/livepak">npm</a></footer>
   </div>
 </body>
 </html>
