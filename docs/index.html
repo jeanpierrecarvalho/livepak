@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>livepak -- Zero-dependency Chrome extension dev server</title>
+  <meta name="description" content="Zero-dependency Chrome extension dev server with auto-reload, toolbar pinning, and hot reloading. No npm install, just Node.js 22+.">
+  <meta property="og:title" content="livepak">
+  <meta property="og:description" content="Zero-dependency Chrome extension dev server with auto-reload, toolbar pinning, and hot reloading.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://jeanpierrecarvalho.github.io/livepak/">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📦</text></svg>">
+  <style>
+    :root {
+      --bg: #0a0a0b;
+      --bg-card: #111113;
+      --border: #1e1e22;
+      --text: #e4e4e7;
+      --text-secondary: #a1a1aa;
+      --text-muted: #63636e;
+      --accent: #6d9fff;
+      --accent-dim: #6d9fff22;
+      --green: #4ade80;
+      --red: #f87171;
+      --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --mono: 'SF Mono', 'Cascadia Code', 'Fira Code', Consolas, monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 100px 0 64px;
+      text-align: center;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    h1 {
+      font-size: clamp(40px, 8vw, 64px);
+      font-weight: 700;
+      letter-spacing: -2px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      color: var(--text-secondary);
+      font-size: 18px;
+      margin-top: 16px;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .hero-actions {
+      margin-top: 32px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      filter: brightness(1.15);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--text-muted);
+    }
+
+    /* Install */
+    .install {
+      margin-top: 32px;
+    }
+
+    .install-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 20px;
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+
+    .install-box:hover {
+      border-color: var(--text-muted);
+    }
+
+    .install-box .prompt {
+      color: var(--accent);
+      user-select: none;
+    }
+
+    .install-box .copy-hint {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-family: var(--font);
+      user-select: none;
+    }
+
+    /* Features */
+    section {
+      padding: 48px 0;
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 24px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .feature {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* How it works */
+    .steps {
+      counter-reset: step;
+    }
+
+    .step {
+      display: flex;
+      gap: 16px;
+      padding: 12px 0;
+    }
+
+    .step::before {
+      counter-increment: step;
+      content: counter(step);
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .step p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      padding-top: 3px;
+    }
+
+    .step strong {
+      color: var(--text);
+    }
+
+    /* Code block */
+    .code-block {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .code-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .code-title {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .code-copy {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 12px;
+      cursor: pointer;
+      font-family: var(--font);
+    }
+
+    .code-copy:hover {
+      color: var(--text-secondary);
+    }
+
+    pre {
+      padding: 16px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    pre .comment {
+      color: var(--text-muted);
+    }
+
+    pre .cmd {
+      color: var(--text-secondary);
+    }
+
+    /* Comparison table */
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th {
+      text-align: left;
+      padding: 12px 16px;
+      font-weight: 600;
+      font-size: 13px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 10px 16px;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    .highlight {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .yes {
+      color: var(--green);
+    }
+
+    .no {
+      color: var(--red);
+    }
+
+    /* Config */
+    .config-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 540px) {
+      .config-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Footer */
+    footer {
+      padding: 48px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+    }
+
+    footer a {
+      color: var(--text-secondary);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      color: var(--text);
+    }
+
+    /* Divider */
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0;
+    }
+
+    /* CLI options */
+    .cli-option {
+      display: flex;
+      gap: 16px;
+      padding: 8px 0;
+    }
+
+    .cli-flag {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--accent);
+      white-space: nowrap;
+      min-width: 180px;
+      flex-shrink: 0;
+    }
+
+    .cli-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 540px) {
+      .cli-option {
+        flex-direction: column;
+        gap: 2px;
+      }
+      .cli-flag {
+        min-width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero -->
+  <div class="container">
+    <div class="hero">
+      <span class="hero-badge">v3.0 -- zero dependencies</span>
+      <h1>livepak</h1>
+      <p>Chrome extension dev server with auto-reload, toolbar pinning, and hot reloading. No npm install needed.</p>
+      <div class="hero-actions">
+        <a href="https://github.com/jeanpierrecarvalho/livepak" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+        <a href="https://www.npmjs.com/package/livepak" class="btn btn-secondary">
+          npm
+        </a>
+      </div>
+      <div class="install">
+        <div class="install-box" onclick="navigator.clipboard.writeText('npx livepak ./my-extension');this.querySelector('.copy-hint').textContent='copied!'">
+          <span class="prompt">$</span>
+          <span>npx livepak ./my-extension</span>
+          <span class="copy-hint">click to copy</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Features -->
+  <div class="container">
+    <section>
+      <h2>Features</h2>
+      <div class="features">
+        <div class="feature">
+          <div class="feature-title">Zero dependencies</div>
+          <div class="feature-desc">No npm install. Uses Node.js 22+ built-ins: native fetch, WebSocket, fs.watch.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Auto-downloads Chrome</div>
+          <div class="feature-desc">Downloads Chrome for Testing automatically. Bypasses stable Chrome's --load-extension block.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Hot reload</div>
+          <div class="feature-desc">File changes trigger instant extension reload via WebSocket. No manual refresh.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Smart reload</div>
+          <div class="feature-desc">JS/JSON = full reload. CSS/HTML = soft reload + tab refresh. Content scripts reload tabs via CDP.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Auto-pins to toolbar</div>
+          <div class="feature-desc">Extensions are pinned to the Chrome toolbar automatically using the DevTools Protocol.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Multi-extension</div>
+          <div class="feature-desc">Load and watch multiple extensions simultaneously. Each gets its own file watcher.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">Crash-safe</div>
+          <div class="feature-desc">Lockfile stores original manifests. If the process dies, next startup restores everything.</div>
+        </div>
+        <div class="feature">
+          <div class="feature-title">MV2 + MV3</div>
+          <div class="feature-desc">Works with both Manifest V2 and V3 extensions on macOS, Linux, and Windows.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- How it works -->
+  <div class="container">
+    <section>
+      <h2>How it works</h2>
+      <div class="steps">
+        <div class="step"><p><strong>Injects</strong> a tiny WebSocket client into your extension's service worker or background script</p></div>
+        <div class="step"><p><strong>Watches</strong> your extension directory for file changes using native fs.watch</p></div>
+        <div class="step"><p><strong>Downloads</strong> Chrome for Testing and caches it in <code>~/.cache/livepak/</code></p></div>
+        <div class="step"><p><strong>Launches</strong> Chrome with <code>--load-extension</code> and pins extensions via CDP</p></div>
+        <div class="step"><p><strong>Signals</strong> <code>chrome.runtime.reload()</code> over WebSocket when files change</p></div>
+        <div class="step"><p><strong>Refreshes</strong> active tabs when content scripts may have changed</p></div>
+        <div class="step"><p><strong>Restores</strong> your original manifest on exit (or on next startup if crashed)</p></div>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Usage -->
+  <div class="container">
+    <section>
+      <h2>Usage</h2>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">Basic</span>
+        </div>
+        <pre><span class="comment"># run directly with npx</span>
+<span class="cmd">npx livepak ./my-extension</span>
+
+<span class="comment"># or install globally</span>
+<span class="cmd">npm install -g livepak
+livepak ./my-extension</span></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">Advanced</span>
+        </div>
+        <pre><span class="comment"># multiple extensions</span>
+<span class="cmd">livepak ./ext-popup ./ext-content-script</span>
+
+<span class="comment"># test content scripts on a specific page</span>
+<span class="cmd">livepak ./my-extension --open https://example.com</span>
+
+<span class="comment"># use a specific Chrome version</span>
+<span class="cmd">livepak ./my-extension --chrome-version 146</span>
+
+<span class="comment"># watch-only mode (bring your own browser)</span>
+<span class="cmd">livepak ./my-extension --no-launch</span></pre>
+      </div>
+
+      <h2>CLI options</h2>
+      <div style="margin-top: 16px;">
+        <div class="cli-option">
+          <span class="cli-flag">--port &lt;n&gt;</span>
+          <span class="cli-desc">WebSocket port (default: 35729, auto-increments on conflict)</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--open &lt;url&gt;</span>
+          <span class="cli-desc">Open a URL after launch (for testing content scripts)</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--chrome-version &lt;v&gt;</span>
+          <span class="cli-desc">Chrome version (e.g. "146", "latest")</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--chrome-flags &lt;flags&gt;</span>
+          <span class="cli-desc">Extra Chrome flags, comma-separated</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--no-launch</span>
+          <span class="cli-desc">Don't launch Chrome, just watch and reload</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--no-inject</span>
+          <span class="cli-desc">Don't inject reload script (manual setup)</span>
+        </div>
+        <div class="cli-option">
+          <span class="cli-flag">--config &lt;path&gt;</span>
+          <span class="cli-desc">Config file path (default: ./livepak.config.json)</span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Config -->
+  <div class="container">
+    <section>
+      <h2>Config file</h2>
+      <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">Create <code>livepak.config.json</code> in your project root:</p>
+      <div class="code-block">
+        <div class="code-header">
+          <span class="code-title">livepak.config.json</span>
+        </div>
+        <pre>{
+  "extensions": ["./src/extension"],
+  "port": 4000,
+  "open": "https://example.com",
+  "chromeVersion": "146",
+  "chromeFlags": ["--auto-open-devtools-for-tabs"]
+}</pre>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Comparison -->
+  <div class="container">
+    <section>
+      <h2>Comparison</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Tool</th>
+              <th>Deps</th>
+              <th>Lock-in</th>
+              <th>Auto-reload</th>
+              <th>Pin</th>
+              <th>Content reload</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">livepak</td>
+              <td class="yes">0</td>
+              <td class="yes">None</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="yes">Yes</td>
+            </tr>
+            <tr>
+              <td>Plasmo</td>
+              <td class="no">Heavy</td>
+              <td class="no">Yes</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="yes">Yes</td>
+            </tr>
+            <tr>
+              <td>WXT</td>
+              <td class="no">Heavy</td>
+              <td class="no">Vite</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="yes">Yes</td>
+            </tr>
+            <tr>
+              <td>CRXJS</td>
+              <td class="no">Heavy</td>
+              <td class="no">Vite</td>
+              <td class="yes">Yes</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+            <tr>
+              <td>web-ext</td>
+              <td>Medium</td>
+              <td class="yes">None</td>
+              <td>Firefox only</td>
+              <td class="no">No</td>
+              <td class="no">No</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Footer -->
+  <div class="container">
+    <footer>
+      <p>MIT License &middot; <a href="https://github.com/jeanpierrecarvalho/livepak">GitHub</a> &middot; <a href="https://www.npmjs.com/package/livepak">npm</a></p>
+    </footer>
+  </div>
+
+</body>
+</html>
