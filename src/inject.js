@@ -91,7 +91,13 @@ export function injectReloadClient(extensionDir, port = 35729) {
   if (mv === 3) {
     const existingSw = manifest.background?.service_worker;
     if (existingSw) {
-      const wrapperContent = `importScripts('${existingSw}', '${RELOAD_SCRIPT_NAME}');`;
+      const isModule = manifest.background?.type === 'module';
+      let wrapperContent;
+      if (isModule) {
+        wrapperContent = `import './${existingSw}';\nimport './${RELOAD_SCRIPT_NAME}';`;
+      } else {
+        wrapperContent = `importScripts('${existingSw}', '${RELOAD_SCRIPT_NAME}');`;
+      }
       fs.writeFileSync(path.join(extensionDir, WRAPPER_NAME), wrapperContent);
       manifest.background.service_worker = WRAPPER_NAME;
     } else {
